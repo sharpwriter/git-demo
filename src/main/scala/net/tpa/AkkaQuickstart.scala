@@ -22,7 +22,7 @@ class Greeter(message: String, printerActor: ActorRef) extends Actor {
 
   var greeting = ""
 
-  def receive: PartialFunction[Any, Unit] = {
+  def receive = {
     case WhoToGreet(who) =>
       greeting = message + ", " + who
     case Greet           =>
@@ -48,7 +48,7 @@ object Printer {
 class Printer extends Actor with ActorLogging {
   import Printer._
 
-  def receive: PartialFunction[Any, Unit] = {
+  def receive = {
     case Greeting(greeting) =>
       log.info("Greeting received (from " + sender() + "): " + greeting)
   }
