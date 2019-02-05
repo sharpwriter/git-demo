@@ -1,66 +1,22 @@
 //#full-example
 package net.tpa
 
-import akka.actor.{ Actor, ActorLogging, ActorRef, ActorSystem, Props }
-
-//#greeter-companion
-//#greeter-messages
-object Greeter {
-  //#greeter-messages
-  def props(message: String, printerActor: ActorRef): Props = Props(new Greeter(message, printerActor))
-  //#greeter-messages
-  final case class WhoToGreet(who: String)
-  case object Greet
-}
-//#greeter-messages
-//#greeter-companion
-
-//#greeter-actor
-class Greeter(message: String, printerActor: ActorRef) extends Actor {
-  import Greeter._
-  import Printer._
-
-  var greeting = ""
-
-  def receive = {
-    case WhoToGreet(who) =>
-      greeting = message + ", " + who
-    case Greet           =>
-      //#greeter-send-message
-      printerActor ! Greeting(greeting)
-      //#greeter-send-message
-  }
-}
-//#greeter-actor
-
-//#printer-companion
-//#printer-messages
-object Printer {
-  //#printer-messages
-  def props: Props = Props[Printer]
-  //#printer-messages
-  final case class Greeting(greeting: String)
-}
-//#printer-messages
-//#printer-companion
-
-//#printer-actor
-class Printer extends Actor with ActorLogging {
-  import Printer._
-
-  def receive = {
-    case Greeting(greeting) =>
-      log.info("Greeting received (from " + sender() + "): " + greeting)
-  }
-}
-//#printer-actor
+import akka.actor.{ActorRef, ActorSystem}
+import net.tpa.actors.{Greeter, Printer}
 
 //#main-class
 object AkkaQuickstart extends App {
-  import Greeter._
+  import net.tpa.actors.Greeter._
+  import net.tpa.models._
+
+
+  // i would like to have function that calculate the factorial of the length of a string
+
+  lazy val myTask = Task(1L, "TASK TITLE", "TASK DESCRIPTION", New)
+  println(myTask)
 
   // Create the 'helloAkka' actor system
-  val system: ActorSystem = ActorSystem("helloAkka")
+  val system: ActorSystem = ActorSystem("DemoSystem")
 
   //#create-actors
   // Create the printer actor
@@ -76,17 +32,24 @@ object AkkaQuickstart extends App {
   //#create-actors
 
   //#main-send-messages
-  howdyGreeter ! WhoToGreet("Akka")
-  howdyGreeter ! Greet
 
-  howdyGreeter ! WhoToGreet("Lightbend")
-  howdyGreeter ! Greet
+  while(true)
+    {
+      howdyGreeter ! WhoToGreet("Akka")
+      howdyGreeter ! Greet
 
-  helloGreeter ! WhoToGreet("Scala")
-  helloGreeter ! Greet
+      howdyGreeter ! WhoToGreet("Lightbend")
+      howdyGreeter ! Greet
 
-  goodDayGreeter ! WhoToGreet("Play")
-  goodDayGreeter ! Greet
+      helloGreeter ! WhoToGreet("Scala")
+      helloGreeter ! Greet
+
+      goodDayGreeter ! WhoToGreet("Play")
+      goodDayGreeter ! Greet
+      Thread.sleep(5000)
+    }
+
+
   //#main-send-messages
 }
 //#main-class
