@@ -48,6 +48,5 @@ class Consumer(queue: ActorRef, delegateTo: ActorRef) extends Actor with ActorLo
       sender() ! Pong
     //#consumer-end
   }
-}
 
 }
