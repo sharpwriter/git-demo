@@ -1,22 +1,22 @@
 package net.tpa.actors
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
-import net.tpa.actors.PointToPointChannel._
-
+//#singleton-message-classes
 object Consumer {
-
   case object End
   case object GetCurrent
   case object Ping
   case object Pong
-
-  def props(queue: ActorRef, delegateTo: ActorRef) : Props = Props(classOf[Consumer], queue, delegateTo)
 }
+//#singleton-message-classes
 
+/**
+  * The Singleton actor
+  */
 class Consumer(queue: ActorRef, delegateTo: ActorRef) extends Actor with ActorLogging {
 
   import Consumer._
-  import PointToPointChannel._
+  import net.tpa.actors.PointToPointChannel._
 
   var current = 0
   var stoppedBeforeUnregistration = true
@@ -48,5 +48,4 @@ class Consumer(queue: ActorRef, delegateTo: ActorRef) extends Actor with ActorLo
       sender() ! Pong
     //#consumer-end
   }
-
 }

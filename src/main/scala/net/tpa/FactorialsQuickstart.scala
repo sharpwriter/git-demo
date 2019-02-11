@@ -2,6 +2,7 @@ import akka.actor.ActorSystem
 import akka.pattern.ask
 import akka.util.Timeout
 import net.tpa.actors.FactorialActor
+import net.tpa.implicits.FactorialFacade
 
 import scala.concurrent.duration._
 
@@ -14,7 +15,7 @@ object FactorialsQuickstart extends App {
 
   val system = ActorSystem("FactorialSystem")
 
-  val fa = system.actorOf(FactorialActor.props)
+  val fa = system.actorOf(FactorialActor.props(FactorialFacade))
 
   implicit val timeout: Timeout = 500.millis
   val myFuture : Future[FactorialResponse] = (fa ? FactorialRequest(4)).mapTo[FactorialResponse]

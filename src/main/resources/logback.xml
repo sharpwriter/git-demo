@@ -19,6 +19,7 @@
     </appender>
 
     <logger name="akka" level="DEBUG" />
+    <logger name="reactivemongo" level="WARN" />
     <root level="DEBUG">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>

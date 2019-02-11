@@ -17,7 +17,7 @@ class SimpleClusterListener extends Actor with ActorLogging {
   // subscribe to cluster changes, re-subscribe when restart
   override def preStart(): Unit = {
     cluster.subscribe(self, initialStateMode = InitialStateAsEvents,
-      classOf[MemberEvent], classOf[UnreachableMember])
+      classOf[MemberEvent], classOf[UnreachableMember], classOf[MemberWeaklyUp])
   }
   override def postStop(): Unit = cluster.unsubscribe(self)
 
@@ -30,6 +30,7 @@ class SimpleClusterListener extends Actor with ActorLogging {
       log.info(
         "Member is Removed: {} after {}",
         member.address, previousStatus)
+    case MemberWeaklyUp(member) => log.info("Member detected in weakly up state {}", member)
     case _: MemberEvent ⇒ // ignore
   }
 }

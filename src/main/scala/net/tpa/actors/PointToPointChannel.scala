@@ -1,7 +1,8 @@
 package net.tpa.actors
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Props}
+import akka.actor.{Actor, ActorLogging, ActorRef}
 
+//#singleton-message-classes
 object PointToPointChannel {
   case object UnregistrationOk
   //#singleton-message-classes
@@ -12,11 +13,16 @@ object PointToPointChannel {
   case object UnexpectedUnregistration
   case object Reset
   case object ResetOk
-
-  def props: Props = Props[PointToPointChannel]
+  //#singleton-message-classes
 }
+//#singleton-message-classes
 
-
+/**
+  * This channel is extremely strict with regards to
+  * registration and unregistration of consumer to
+  * be able to detect misbehavior (e.g. two active
+  * singleton instances).
+  */
 class PointToPointChannel extends Actor with ActorLogging {
 
   import PointToPointChannel._
@@ -54,5 +60,4 @@ class PointToPointChannel extends Actor with ActorLogging {
       sender() ! ResetOk
     case msg ⇒ consumer ! msg
   }
-
 }

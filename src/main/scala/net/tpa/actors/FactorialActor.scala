@@ -1,11 +1,10 @@
 package net.tpa.actors
-
 import akka.actor.{Actor, ActorLogging, Props}
-import net.tpa.calculators.Calculators._
+import net.tpa.interfaces.IFactorialService
 
 object FactorialActor {
 
-  def props():Props = Props(new FactorialActor())
+  def props(service:IFactorialService):Props = Props(classOf[FactorialActor], service)
 
   case class FactorialRequest(number:Int)
   case class FactorialResponse(factorial:BigInt)
@@ -17,7 +16,7 @@ object FactorialActor {
 }
 
 
-class FactorialActor extends Actor with ActorLogging {
+class FactorialActor(service:IFactorialService) extends Actor with ActorLogging {
 
   import FactorialActor._
 
@@ -30,11 +29,11 @@ class FactorialActor extends Actor with ActorLogging {
   override def receive: Receive = {
     case FactorialRequest(n) =>
       log.debug("Starting to execute the good factorial function")
-      sender() ! FactorialResponse(goodFactorial(n))
+      sender() ! FactorialResponse(service.factorial(n))
     case IsFactorialNumberRequest(n) =>
 
-      factorialOf(n) match {
-      case Some(number) => sender() ! IsAFactorialNumberFor(number)
+      service.isFactorialNumber(n) match {
+      case Some(number) => sender() ! service.isFactorialNumber(number)
       case None => sender() ! NotAFactorialNumber
     }
   }
